@@ -4,6 +4,7 @@ import Nested from './views/Nested.vue'
 import NestedWithId from './views/NestedWithId.vue'
 import Dynamic from './views/Dynamic.vue'
 import User from './views/User.vue'
+import Increment from './views/Increment.vue'
 import NotFound from './views/NotFound.vue'
 const component = () => {
   console.log('fetching component')
@@ -34,6 +35,12 @@ export const router = createRouter({
         name: 'user',
         params: { id: String(Math.round(Math.random() * 100)) },
       }),
+    },
+    {
+      path: '/bug/:increment',
+      name: 'inc',
+      component: Increment,
+      props: route => ({ increment: route.params.increment }),
     },
     { path: '/users/:id', name: 'user', component: User, props: true },
     { path: '/documents/:id', name: 'docs', component: User, props: true },
