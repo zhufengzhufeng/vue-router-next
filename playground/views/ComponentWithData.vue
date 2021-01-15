@@ -2,6 +2,9 @@
   <div>
     <p>Here is the data: {{ fromApi }}</p>
     other {{ other }}
+    <button @click="$router.push({ hash: '#' + Date.now() })">
+      new navigation
+    </button>
   </div>
 </template>
 
@@ -20,19 +23,32 @@ export default defineComponent({
       next()
     })
 
+    // onBeforeRouteResolve(async (to, from) => {
+    //   console.log('waiting 1s')
+    //   await delay(200)
+    //   console.log('done waiting')
+
+    //   // can throw
+    //   data.fromApi = await getData()
+    // })
+
+    console.log('waiting 1s')
+    await delay(200)
+    console.log('done waiting')
+
     data.fromApi = await getData()
 
     return {
       ...toRefs(data),
     }
   },
-  async beforeRouteEnter(to, from, next) {
-    console.log('this in beforeRouteEnter', this)
-    await delay(300)
-    next(vm => {
-      console.log('got vm', vm)
-      vm.other = 'Hola'
-    })
-  },
+  // async beforeRouteEnter(to, from, next) {
+  //   console.log('this in beforeRouteEnter', this)
+  //   await delay(300)
+  //   next(vm => {
+  //     console.log('got vm', vm)
+  //     vm.other = 'Hola'
+  //   })
+  // },
 })
 </script>

@@ -157,26 +157,31 @@
       </li>
     </ul>
     <button @click="toggleViewName">Toggle view</button>
-    <Suspense>
-      <template #default>
-        <router-view :name="viewName" v-slot="{ Component, route }">
-          <transition
-            :name="route.meta.transition || 'fade'"
-            mode="out-in"
-            @before-enter="flushWaiter"
-            @before-leave="setupWaiter"
-          >
-            <keep-alive>
-              <component
-                :is="Component"
-                :key="route.name === 'repeat' ? route.path : undefined"
-              />
-            </keep-alive>
-          </transition>
-        </router-view>
-      </template>
-      <template #fallback> Loading... </template>
-    </Suspense>
+
+    <router-view :name="viewName" v-slot="{ Component, route }">
+      <transition
+        :name="route.meta.transition || 'fade'"
+        mode="out-in"
+        @before-enter="flushWaiter"
+        @before-leave="setupWaiter"
+      >
+        <Suspense
+          @pending="onPending"
+          @resolve="onResolve"
+          @fallback="onFallback"
+        >
+          <template #default>
+            <component
+              :is="Component"
+              :key="route.name === 'repeat' ? route.path : undefined"
+            />
+          </template>
+          <template #fallback>
+            <p>Loading...</p>
+          </template>
+        </Suspense>
+      </transition>
+    </router-view>
   </div>
 </template>
 
@@ -208,7 +213,23 @@ export default defineComponent({
       () => '/users/' + String((Number(route.value.params.id) || 0) + 1)
     )
 
+    function onPending(...args) {
+      console.log('pending', ...args)
+    }
+
+    function onResolve(...args) {
+      console.log('resolve', ...args)
+    }
+
+    function onFallback(...args) {
+      console.log('fallback', ...args)
+    }
+
     return {
+      onPending,
+      onResolve,
+      onFallback,
+
       currentLocation,
       nextUserLink,
       state,
